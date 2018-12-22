@@ -23,6 +23,13 @@ body{
   /* font-family: 'Playfair Display', serif; */
 }
 
+#particles-js{
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  background: #319CF8;
+}
+
 button{
   outline: none;
   border: none;
@@ -104,6 +111,7 @@ button{
   width: 25%;
   max-width: 380px;
   min-width: 300px;
+  max-height: 90vh;
 }
 
 .card{
@@ -116,17 +124,22 @@ button{
   margin-bottom: 35px;
 }
 
+.card:focus-within{
+  box-shadow: 0 17px 20px -13px rgba(0,0,0,0.50);
+}
+
 .card:hover {
   box-shadow: 0 17px 20px -13px rgba(0,0,0,0.50);
 }
 
 .newCard {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, 10px);
+  position: relative;
+  right: -25%;
+  transform: translate(0%, -162%);
   width: 60px;
   height: 60px;
   opacity: 0.5;
+  float: right;
 }
 
 .newCard:hover{
@@ -156,6 +169,19 @@ button{
 .plusH{
   position: relative;
   transform: rotate(90deg) translate(-50%, 10%);
+}
+
+#ogCard{
+  opacity: 0.5;
+}
+
+#ogCard:focus-within{
+  opacity: 1;
+  box-shadow: 0 17px 20px -13px rgba(0,0,0,0.50);
+}
+
+#ogCard:focus-within button{
+  opacity: 1;
 }
 
 .textField{
