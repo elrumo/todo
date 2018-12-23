@@ -3,7 +3,7 @@
 var config = {
   apiKey: "AIzaSyCld-s06eXUKJxzNIPJIH25Bo5kwNfl7wM",
   authDomain: "todo-ac585.firebaseapp.com",
-  databaseURL: "https://todo-ac585.firebaseio.com",
+  databasenote: "https://todo-ac585.firebaseio.com",
   projectId: "todo-ac585",
   storageBucket: "todo-ac585.appspot.com",
   messagingSenderId: "554449734252"
@@ -28,6 +28,7 @@ firestore.settings({
 var docRef = firestore.collection("notes");
 var inputTextField = document.querySelector('#textField');
 var submitText = document.querySelector('#submitText');
+var insertCardAfter = document.getElementById('ogCard');
 
 //Add input to DB
 submitText.addEventListener("click", function() {
@@ -35,25 +36,18 @@ submitText.addEventListener("click", function() {
   if (inputTextField.value != "") {
     console.log("I am going to save " + noteToSave + " to Firestore");
     docRef.add({
-      url: noteToSave
+      note: noteToSave
     }).then(function(docRef) {
       console.log("Site saved!");
       document.getElementById('textField').value = "";
-
-      //Retrieve ID of saved note
-      var docRefId = docRef.id;
-
-      //Retreive content of specific note ID
-      docRef.get().then(function(docRefId) {
-
-        var docData = docRefId.data().url;
-        var insertCardAfter = document.getElementById('ogCard')
-        var card = '<div class="card"> <input id="" class="textField" type="text" name="" value="' + docData + '"> <label class="container"> <input type="checkbox"> <span class="checkmark"></span> </label> </div>'
-
-        // Append <button> to <body>
-        insertCardAfter.insertAdjacentHTML('beforebegin', card);
-
-      })
+      // // Retrieve ID of saved note
+      // var docRefId = docRef.id;
+      // // Retreive content of specific note ID
+      // docRef.get().then(function(docRefId) {
+      //   var docData = docRefId.data().note;
+      //   var card = '<div class="card"> <input id="" class="textField" type="text" name="" value="' + docData + '"> <label class="container"> <input type="checkbox"> <span class="checkmark"></span> </label> </div>'
+      //   insertCardAfter.insertAdjacentHTML('beforebegin', card);
+      // })
     }).catch(function(error) {
       console.log("Got an error: ", error);
     });
@@ -63,22 +57,28 @@ submitText.addEventListener("click", function() {
   };
 });
 
-//Retrieve DB data
-function getRealTimeUpdates() {
-  docRef.onSnapshot(function(doc) {
-    if (doc && doc.exists) {
-      const myData = doc.data();
-      const outputHeader = document.querySelector("#textField");
-      outputHeader.innerText = myData.url;
-    }
-  });
-};
+//// Retrieve DB data
+// function getRealTimeUpdates() {
+//   docRef.onSnapshot(function(doc) {
+//     if (doc && doc.exists) {
+//       var cardData = doc.data().note;
+//       var card = '<div class="card"> <input id="" class="textField" type="text" name="" value="' + cardData + '"> <label class="container"> <input type="checkbox"> <span class="checkmark"></span> </label> </div>';
+//       insertCardAfter.insertAdjacentHTML('beforebegin', card);
+//     }
+//   });
+// };
+//
+// getRealTimeUpdates();
+
+// TODO: Update cards instead of re-weritting all of them again
+
+function getRealTimeUpdates(){
+  firestore.collection("notes").onSnapshot(function(onSnapshot) {
+        onSnapshot.forEach(function(doc){
+          var cardData = doc.data().note;
+          var card = '<div class="card"> <input id="" class="textField" type="text" name="" value="' + cardData + '"> <label class="container"> <input type="checkbox"> <span class="checkmark"></span> </label> </div>';
+          insertCardAfter.insertAdjacentHTML('beforebegin', card);        })
+    });
+  };
 
 getRealTimeUpdates();
-//})();
-
-
-// function docRefId (){
-//   console.log("Document written with ID: ", docRef.id);
-// };
-// docRefId();
