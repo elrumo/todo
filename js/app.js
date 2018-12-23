@@ -30,6 +30,20 @@ var inputTextField = document.querySelector('#textField');
 var submitText = document.querySelector('#submitText');
 var insertCardAfter = document.getElementById('ogCard');
 
+
+//Add data
+function getRealTimeUpdates(){
+  firestore.collection("notes").onSnapshot(function(onSnapshot) {
+        onSnapshot.forEach(function(doc){
+          var cardData = doc.data().note;
+          var card = '<div class="card new"> <input id="" class="textField" type="text" name="" value="' + cardData + '"> <label class="container"> <input type="checkbox"> <span class="checkmark"></span> </label> </div>';
+          insertCardAfter.insertAdjacentHTML('beforebegin', card);})
+    });
+  };
+
+//add time stap to doc ID for chronolofial order
+  getRealTimeUpdates();
+
 //Add input to DB
 submitText.addEventListener("click", function() {
   var noteToSave = inputTextField.value;
@@ -40,6 +54,14 @@ submitText.addEventListener("click", function() {
     }).then(function(docRef) {
       console.log("Site saved!");
       document.getElementById('textField').value = "";
+
+      //Delete Old elements
+      var list = document.getElementsByClassName("new");
+      for(var i = list.length - 1; 0 <= i; i--)
+      if(list[i] && list[i].parentElement)
+      list[i].parentElement.removeChild(list[i]);
+
+      getRealTimeUpdates();
       // // Retrieve ID of saved note
       // var docRefId = docRef.id;
       // // Retreive content of specific note ID
@@ -71,14 +93,3 @@ submitText.addEventListener("click", function() {
 // getRealTimeUpdates();
 
 // TODO: Update cards instead of re-weritting all of them again
-
-function getRealTimeUpdates(){
-  firestore.collection("notes").onSnapshot(function(onSnapshot) {
-        onSnapshot.forEach(function(doc){
-          var cardData = doc.data().note;
-          var card = '<div class="card new"> <input id="" class="textField" type="text" name="" value="' + cardData + '"> <label class="container"> <input type="checkbox"> <span class="checkmark"></span> </label> </div>';
-          insertCardAfter.insertAdjacentHTML('beforebegin', card);        })
-    });
-  };
-
-getRealTimeUpdates();
