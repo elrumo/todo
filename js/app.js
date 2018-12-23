@@ -76,7 +76,7 @@ function getRealTimeUpdates(){
   firestore.collection("notes").onSnapshot(function(onSnapshot) {
         onSnapshot.forEach(function(doc){
           var cardData = doc.data().note;
-          var card = '<div class="card"> <input id="" class="textField" type="text" name="" value="' + cardData + '"> <label class="container"> <input type="checkbox"> <span class="checkmark"></span> </label> </div>';
+          var card = '<div class="card new"> <input id="" class="textField" type="text" name="" value="' + cardData + '"> <label class="container"> <input type="checkbox"> <span class="checkmark"></span> </label> </div>';
           insertCardAfter.insertAdjacentHTML('beforebegin', card);        })
     });
   };

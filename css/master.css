@@ -134,8 +134,8 @@ button{
 
 .newCard {
   position: relative;
-  right: -25%;
-  transform: translate(0%, -162%);
+  left: -50%;
+  transform: translate(50%, 0%);
   width: 60px;
   height: 60px;
   opacity: 0.5;
