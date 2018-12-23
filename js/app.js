@@ -1,4 +1,3 @@
-//(function) {
 // Initialise Firebase
 var config = {
   apiKey: "AIzaSyCld-s06eXUKJxzNIPJIH25Bo5kwNfl7wM",
@@ -18,58 +17,62 @@ firestore.settings({
   timestampsInSnapshots: true
 });
 
-//Set IDs to constants
-// const docRef = firestore.doc("samples/websites");
-// TODO: Read name of .doc on firebase DB
-
-// TODO: Read and fetch all doc IDs
-
-// var docRef = firestore.collection("notes").doc();
 var docRef = firestore.collection("notes");
 var inputTextField = document.querySelector('#textField');
 var submitText = document.querySelector('#submitText');
 var insertCardAfter = document.getElementById('ogCard');
 
+//Delete Data
+function deleteData(noteToDelte) {
+    firestore.collection("notes").doc(noteToDelte).delete().then(function() {
+      console.log("Document successfully deleted!");
+    }).catch(function(error) {
+      console.error("Error removing document: ", error);
+    });
+}
 
-//Add data
+//Delete all elements
+function deleteAllItems(){
+  var list = document.getElementsByClassName("new");
+  for(var i = list.length - 1; 0 <= i; i--)
+  if(list[i] && list[i].parentElement)
+  list[i].parentElement.removeChild(list[i]);
+}
+
+//Retrieve and add data to view
 function getRealTimeUpdates(){
   firestore.collection("notes").onSnapshot(function(onSnapshot) {
-        onSnapshot.forEach(function(doc){
+      deleteAllItems();
+      onSnapshot.forEach(function(doc){
+          // var cardId = firestore.collection("notes").doc().id;
           var cardData = doc.data().note;
-          var card = '<div class="card new"> <input id="" class="textField" type="text" name="" value="' + cardData + '"> <label class="container"> <input type="checkbox"> <span class="checkmark"></span> </label> </div>';
+          var cardId = doc.id;
+          console.log(cardId);
+          // Quotationa and "\" added ot var or else the function won't read the whole thing
+          var cardIdToDelete = "\'" + cardId + "\'";
+          var card = '<div class="card new"><button class="deleteButton" onclick=deleteData('+cardIdToDelete+')><i class="fas fa-times"></i></button><input id="'+cardId+'" class="textField" type="text" name="" value="' + cardData + '"> <label class="container"> <input type="checkbox"> <span class="checkmark"></span> </label> </div>';
           insertCardAfter.insertAdjacentHTML('beforebegin', card);})
     });
   };
-
-//add time stap to doc ID for chronolofial order
-  getRealTimeUpdates();
+getRealTimeUpdates();
 
 //Add input to DB
 submitText.addEventListener("click", function() {
   var noteToSave = inputTextField.value;
   if (inputTextField.value != "") {
+    var timeStamp = new Date().getTime();
+    var newDocRef = firestore.collection("notes").doc("\""+timeStamp+"\"");
+    console.log(newDocRef);
     console.log("I am going to save " + noteToSave + " to Firestore");
-    docRef.add({
+    newDocRef.set({
       note: noteToSave
-    }).then(function(docRef) {
+    }).then(function(newDocRef) {
       console.log("Site saved!");
+      //Empty text field input
       document.getElementById('textField').value = "";
 
-      //Delete Old elements
-      var list = document.getElementsByClassName("new");
-      for(var i = list.length - 1; 0 <= i; i--)
-      if(list[i] && list[i].parentElement)
-      list[i].parentElement.removeChild(list[i]);
-
       getRealTimeUpdates();
-      // // Retrieve ID of saved note
-      // var docRefId = docRef.id;
-      // // Retreive content of specific note ID
-      // docRef.get().then(function(docRefId) {
-      //   var docData = docRefId.data().note;
-      //   var card = '<div class="card"> <input id="" class="textField" type="text" name="" value="' + docData + '"> <label class="container"> <input type="checkbox"> <span class="checkmark"></span> </label> </div>'
-      //   insertCardAfter.insertAdjacentHTML('beforebegin', card);
-      // })
+
     }).catch(function(error) {
       console.log("Got an error: ", error);
     });
@@ -79,17 +82,5 @@ submitText.addEventListener("click", function() {
   };
 });
 
-//// Retrieve DB data
-// function getRealTimeUpdates() {
-//   docRef.onSnapshot(function(doc) {
-//     if (doc && doc.exists) {
-//       var cardData = doc.data().note;
-//       var card = '<div class="card"> <input id="" class="textField" type="text" name="" value="' + cardData + '"> <label class="container"> <input type="checkbox"> <span class="checkmark"></span> </label> </div>';
-//       insertCardAfter.insertAdjacentHTML('beforebegin', card);
-//     }
-//   });
-// };
-//
-// getRealTimeUpdates();
-
+// TODO: add time stap to doc ID for chronolofial order
 // TODO: Update cards instead of re-weritting all of them again
